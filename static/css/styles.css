@@ -44,3 +44,11 @@ form button {
 #messages li:nth-child(odd) {
   background: #eee;
 }
+
+.error{
+  color: red;
+}
+
+.private{
+  color: rgb(133, 63, 75);
+}

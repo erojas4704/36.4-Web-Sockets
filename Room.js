@@ -44,6 +44,16 @@ class Room {
     this.members.delete(member);
   }
 
+  /**Gets an user by their name */
+  getUser(name) {
+    for (let member of this.members) {
+      if (member.name == name) {
+        return member;
+      }
+    }
+    throw new Error(`Member ${name} could not be found.`);
+  }
+
   /** send message to all members in a room. */
 
   broadcast(data) {

@@ -2,6 +2,7 @@
 
 // Room is an abstraction of a chat channel
 const Room = require('./Room');
+const { interpret } = require("./commands");
 
 /** ChatUser is a individual connection from client -> server to chat. */
 
@@ -40,12 +41,28 @@ class ChatUser {
   /** handle a chat: broadcast to room. */
 
   handleChat(text) {
+    if (text.slice(0, 1) === "/") {
+      this.runCommand(text.slice(1));
+      return;
+    }
+
     this.room.broadcast({
       name: this.name,
       type: 'chat',
       text: text
     });
   }
+
+  /**Run a command */
+  runCommand(text) {
+    let [command, ...args] = text.split(" ");
+    try {
+      interpret(command, this, this.room, args);
+    } catch (err) {
+      this.send(err);
+    }
+  }
+
 
   /** Handle messages from client:
    *

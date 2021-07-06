@@ -3,6 +3,10 @@ const axios = require("axios");
 const commands = {
     "joke": joke,
     "users": listUsers,
+    "priv": privateMessage,
+    "w": privateMessage,
+    "t": privateMessage,
+    "whisper": privateMessage
 }
 
 async function interpret(command, user, room, args) {
@@ -12,15 +16,39 @@ async function interpret(command, user, room, args) {
 }
 
 function listUsers(user, room) {
-    let members;
-    for(let user of room.members){
-        members += user.name;
+    let members = "";
+    for (let user of room.members) {
+        members += " " + user.name;
     }
 
-    user.send({
-        type: "info",
-        message: "Users: " + members
-    });
+    user.send(JSON.stringify({
+        name: "Server",
+        type: "chat",
+        text: "Users: " + members
+    }));
+}
+
+function privateMessage(user, room, toUser, message) {
+    debugger;
+    try {
+        let target = room.getUser(toUser);
+        target.send(JSON.stringify({
+            name: `From ${user.name}`,
+            type: "private",
+            text: message
+        }));
+        user.send(JSON.stringify({
+            name: `To ${toUser}`,
+            type: "private",
+            text: message
+        }));
+    }catch(err){
+        user.send(JSON.stringify({
+            name: "Server",
+            type: "error",
+            text: err.message
+        }));
+    }
 }
 
 async function joke(user, room) {
